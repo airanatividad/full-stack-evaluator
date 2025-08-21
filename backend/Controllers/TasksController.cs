@@ -1,62 +1,56 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
-using TaskManager.Models;
-using TaskManager.Data;
+using TaskManager.DTOs;
+using TaskManager.Services;  
 namespace TaskManager.API
 {
     [Route("tasks")]
     [ApiController]
     public class TasksController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITasksService _taskService;
 
-        public TasksController(ApplicationDbContext context)
+        public TasksController(ITasksService taskService)
         {
-            _context = context;
+            _taskService = taskService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            
-            var tasks = await _context.Tasks.ToListAsync();
+            var tasks = await _taskService.GetAllTasksAsync();
             return Ok(tasks);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TaskItem task)
+        public async Task<IActionResult> CreateTask([FromBody] CreateTaskDto dto)
         {
-            
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = task.Id }, task);
+            var task = await _taskService.CreateTaskAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
         }
 
-        [HttpPut("{id}")] 
-        public async Task<IActionResult> Update(int id, [FromBody] TaskItem updated)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return NotFound();
-
-            task.Title = updated.Title;
-            task.IsDone = updated.IsDone;
-            await _context.SaveChangesAsync();
-
+            var task = await _taskService.GetTaskByIdAsync(id);
+            if (task == null)
+                return NotFound();
             return Ok(task);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] GetTaskDto dto)
+        {
+            var success = await _taskService.UpdateTaskAsync(id, dto);
+            if (!success) return NotFound();
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return NotFound();
-
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-
+            var success = await _taskService.DeleteTaskAsync(id);
+            if (!success) return NotFound();
             return NoContent();
         }
     }

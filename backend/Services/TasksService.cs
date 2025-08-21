@@ -5,11 +5,11 @@ using TaskManager.Data;
 
 namespace TaskManager.Services
 {
-    public class TaskService : ITaskService
+    public class TasksService : ITasksService
     {
         private readonly ApplicationDbContext _context;
 
-        public TaskService(ApplicationDbContext context)
+        public TasksService(ApplicationDbContext context)
         {
             _context = context;
         }

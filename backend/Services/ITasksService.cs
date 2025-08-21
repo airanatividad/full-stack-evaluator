@@ -2,7 +2,7 @@ using TaskManager.DTOs;
 
 namespace TaskManager.Services
 {
-    public interface ITaskService
+    public interface ITasksService
     {
         Task<IEnumerable<GetTaskDto>> GetAllTasksAsync();
         Task<GetTaskDto?> GetTaskByIdAsync(int id);
