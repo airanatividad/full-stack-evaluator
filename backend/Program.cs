@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // frontend url, should be in .env
+        policy.WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_BASE_URL"))
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

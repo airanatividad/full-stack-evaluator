@@ -86,7 +86,7 @@ function Tasks() {
               onKeyDown={e => e.key === 'Enter' && handleAddTask()}
             />
             <button
-              // onClick={handleAddTask}
+              onClick={handleAddTask}
               className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-indigo-700"
             >
               Add
